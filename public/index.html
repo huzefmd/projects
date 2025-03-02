@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>full stack app</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script>
+        async function signin(){
+            const username=document.getElementById("sign-up-username").value
+            const password=document.getElementById("sign-up-password").value
+            await axios.post("http://localhost:3000/signin",{
+                username:username,
+                password:password
+            })
+            alert("you have succesfully signed in")
+            showlogin()
+        }
+        async function login(){
+    
+            const username=document.getElementById('log-in-username').value
+            const password=document.getElementById('log-in-password').value
+            const response = await axios.post("http://localhost:3000/login",{
+                username:username,
+                password:password
+            });
+            localStorage.setItem('token',response.data.token)
+
+            alert("you have succesfully  loged in")
+            get_user_info()
+            showuserinfo()
+        }
+        function showsignin(){
+            document.getElementById('signin-section').style.display="block"
+            document.getElementById('login-section').style.display="none"
+            document.getElementById('user-info-section').style.display="none"
+            document.getElementById('logout').style.display="none"
+
+        }
+        function showlogin(){
+            document.getElementById('signin-section').style.display="none"
+            document.getElementById('login-section').style.display="block"
+            document.getElementById('user-info-section').style.display="none"
+            document.getElementById('logout').style.display="none"
+
+
+        }
+        function showuserinfo(){
+            document.getElementById('signin-section').style.display="none"
+            document.getElementById('login-section').style.display="none"
+            document.getElementById('user-info-section').style.display="block"
+            document.getElementById('logout').style.display="block"
+
+        }
+
+        async function get_user_info(){
+            const response=await axios.get("http://localhost:3000/me",{
+                headers:{
+                    token:localStorage.getItem('token')
+                }
+            })
+            document.getElementById("greet").innerHTML="Welcome " +response.data.username
+        }
+        function logout(){  
+            localStorage.removeItem('token')
+            showsignin()
+        }
+
+
+
+    </script>
+</head>
+<body onload="showsignin()">
+    <div id="signin-section">
+        <h1>Signin</h1>
+        name:<input type="text" name="username", placeholder="enter ur name" id="sign-up-username">
+        password:<input type="password" name="password", placeholder="enter ur password" id="sign-up-password">
+        <button onclick="signin()">Submit</button>
+        <p>Alredy have an accout? <a href="#" onclick="showlogin()">Login</a></p>
+    </div>
+    <div id="login-section">
+        <h1>Login</h1>
+        name:<input type="text" name="username", placeholder="enter ur name" id="log-in-username">
+        password:<input type="text" name="password", placeholder="enter ur password" id="log-in-password">
+        <button onclick="login()">Submit</button>
+        <p>Dont have an accout? <a href="#" onclick="showsignin()">Signin</a></p>
+    </div>
+    <div id="user-info-section">
+        <h1 id="greet"></h1>
+        <!-- <h1>User Information</h1> -->
+        <!-- <div id="user_info"></div> -->
+    </div>
+    <div id="logout">
+        <button onclick="logout()">Logout</button>
+    </div>
+    
+</body>
+</html>
